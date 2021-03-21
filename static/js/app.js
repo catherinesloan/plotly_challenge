@@ -58,36 +58,39 @@ function optionChanged(subject_id) {
         // DOING THE SAME FOR Y AXIS LABELS
         // Slicing the first 10 labels for plotting
         var labelsBarChartSliced = labelsBarChart.slice(0, 10);
-        console.log(`Top 10 sample labels for selected subject id: ${labelsBarChartSliced}`);
+        console.log(`Top 10 id's for selected subject id: ${labelsBarChartSliced}`);
 
         // Reverse the array to accommodate Plotly's defaults
         var labelsBarChartReversed = labelsBarChartSliced.reverse();
-        console.log(`Top 10 sample labels reversed: ${labelsBarChartReversed}`);
+        console.log(`Top 10 id's reversed: ${labelsBarChartReversed}`);
 
         // OTU id's are currently integers which changes the way they are plotted on the y axis
         // Using map to create a new array with OTU added as a string infront of each ID 
         var labels = labelsBarChartReversed.map(y => "OTU " + y);
-        console.log(`OTU IDs: ${labels}`);
-
-        // DOING THE SAME FOR HOVER TEXT
+        console.log(`Top 10 OTU IDs in correct format for labels y axis: ${labels}`);
 
         
+        // DOING THE SAME FOR HOVER TEXT
+        // Slicing the first 10 hover text for plotting
+        var labelsHoverTextSliced = labelsHoverText.slice(0, 10);
+        console.log(`Top 10 OTU labels for hover text: ${labelsHoverTextSliced}`);
+
+        // Reverse the array to accommodate Plotly's defaults
+        var labelsHoverTextReversed = labelsHoverTextSliced.reverse();
+        console.log(`Top 10 OTU labels reversed: ${labelsHoverTextReversed}`);
 
 
-
-
+        // Plotting horizontal bar chart
         var trace1 = {
             type: "bar",
             x: valuesBarChartReversed,
             y: labels,
+            text: labelsHoverTextReversed, 
             orientation: 'h'
-            // NEED HOVER TEXT ** 
         }
 
-        // data
         var data = [trace1];
         
-        // Apply the group bar mode to the layout
         var layout = {
             title: `Top 10 OTU's for ID No.${subject_id}`,
             margin: {
