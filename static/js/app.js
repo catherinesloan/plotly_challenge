@@ -1,3 +1,6 @@
+
+// need to change it so that the data for 940 is visual on openong browser
+
 // 1. Use the D3 library to read in samples.json.
 
 d3.json("samples.json").then(function(data){ 
@@ -39,35 +42,72 @@ function optionChanged(subject_id) {
         console.log(`OTU labels for selected subject id: ${labelsHoverText}`);
 
         // Sorting the array of sample values in descending order
-        var ValuesBarChartSorted = Array.from(valuesBarChart).sort((a, b) => b-a);
-        console.log(`Sorted sample values for selected subject id: ${ValuesBarChartSorted}`);
+        // Don't particularly need this step as the array is already sorted in descending order
+        var valuesBarChartSorted = Array.from(valuesBarChart).sort((a, b) => b-a);
+        console.log(`Sorted sample values for selected subject id: ${valuesBarChartSorted}`);
+
+        // Slicing the first 10 objects for plotting
+        var valuesBarChartSliced = valuesBarChartSorted.slice(0, 10);
+        console.log(`Top 10 sample values for selected subject id: ${valuesBarChartSliced}`);
+
+        // Reverse the array to accommodate Plotly's defaults
+        var valuesBarChartReversed = valuesBarChartSliced.reverse();
+        console.log(`Top 10 sample values reversed: ${valuesBarChartReversed}`);
+
+        
+        // DOING THE SAME FOR Y AXIS LABELS
+        // Slicing the first 10 labels for plotting
+        var labelsBarChartSliced = labelsBarChart.slice(0, 10);
+        console.log(`Top 10 sample labels for selected subject id: ${labelsBarChartSliced}`);
+
+        // Reverse the array to accommodate Plotly's defaults
+        var labelsBarChartReversed = labelsBarChartSliced.reverse();
+        console.log(`Top 10 sample labels reversed: ${labelsBarChartReversed}`);
+
+        // OTU id's are currently integers which changes the way they are plotted on the y axis
+        // Using map to create a new array with OTU added as a string infront of each ID 
+        var labels = labelsBarChartReversed.map(y => "OTU " + y);
+        console.log(`OTU IDs: ${labels}`);
+
+        // DOING THE SAME FOR HOVER TEXT
+
+        
+
+
+
+
+        var trace1 = {
+            type: "bar",
+            x: valuesBarChartReversed,
+            y: labels,
+            orientation: 'h'
+            // NEED HOVER TEXT ** 
+        }
+
+        // data
+        var data = [trace1];
+        
+        // Apply the group bar mode to the layout
+        var layout = {
+            title: `Top 10 OTU's for ID No.${subject_id}`,
+            margin: {
+                l: 100,
+                r: 100,
+                b: 100,
+                // reduced to 30 so plot sits under title nicely
+                t: 30
+            }
+        } 
+
+        // Render the plot to the div tag with id "bar"
+        Plotly.newPlot("bar", data, layout);
+
     })
 };
 
 optionChanged()
 
-// // An unsorted array
-// numArray = [9.9, 6.1, 17.1, 22.7, 4.6, 8.7, 7.2];
 
-// // Sort the array in descending order and assign the results to a variable
-// var numArraySorted = Array.from(numArray).sort((a, b) => b-a)
-
-// // Print the results to the console
-// console.log("numArray", numArray);
-// console.log("numArray descending", numArraySorted)
-
-
-// // Sort the data by Greek search results
-// var sortedByGreekSearch = data.sort((a, b) => b.greekSearchResults - a.greekSearchResults);
-// console.log(sortedByGreekSearch);
-
-// // Slice the first 10 objects for plotting
-// slicedData = sortedByGreekSearch.slice(0, 10);
-// console.log(slicedData);
-
-// // Reverse the array to accommodate Plotly's defaults
-// reversedData = slicedData.reverse();
-// console.log(reversedData);
 
 
 
