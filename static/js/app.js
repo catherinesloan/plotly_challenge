@@ -1,4 +1,3 @@
-
 // need to change it so that the data for 940 is visual on opening browser
 // CHANGE VARIABLE NAMES IN FIRST PART OF CODE - referring to bar chart but actually use them for the bubble chart
 
@@ -29,7 +28,7 @@ function dropdown() {
 dropdown()
 
 
-
+// creating a function for every time the dropdown is changed, all other functions and plots are defined within this
 function optionChanged(subject_id) {
     d3.json("samples.json").then(function(data) { 
         var samples = data.samples;
@@ -152,58 +151,37 @@ function optionChanged(subject_id) {
 
 
 
-          // Display the sample metadata, i.e., an individual's demographic information.
-          // Display each key-value pair from the metadata JSON object somewhere on the page.
+    // 4. Display the sample metadata, i.e., an individual's demographic information.
+    // 5. Display each key-value pair from the metadata JSON object somewhere on the page.
 
-          // Pulling out the demographic info
-          function demographicInfo() {
-            d3.json("samples.json").then(function(data) {
-                var metadata = data.metadata;
-                var idNumber = metadata.filter(x => x.id == subject_id)[0].id;
-                console.log(`The ID number for selected subject: ${idNumber}`);
-
-                var ethnicity = metadata.filter(x => x.id == subject_id)[0].ethnicity;
-                console.log(`The ethnicity of ${idNumber} is ${ethnicity}`);
-
-                var gender = metadata.filter(x => x.id == subject_id)[0].gender;
-                console.log(`The gender of ${idNumber} is ${gender}`);
-
-                var age = metadata.filter(x => x.id == subject_id)[0].age;
-                console.log(`The age of ${idNumber} is ${age}`);
-
-                var location = metadata.filter(x => x.id == subject_id)[0].location;
-                console.log(`The location of ${idNumber} is ${location}`);
-
-                var bbtype = metadata.filter(x => x.id == subject_id)[0].bbtype;
-                console.log(`The bbtype of ${idNumber} is ${bbtype}`);
-
-                var wfreq = metadata.filter(x => x.id == subject_id)[0].wfreq;
-                console.log(`The wfreq of ${idNumber} is ${wfreq}`);
-
-                
+    // defining a function to pull out demographic info, depending on subject_id
+    function demographicInfo() {
+        d3.json("samples.json").then(function(data) {
+            var metadata = data.metadata;
+            var filteredMeta = metadata.filter(x => x.id == subject_id);
+            
+            // then appending it to the demographic info panel
+            var select = d3.select("#sample-metadata"); 
+            // .html("") to clear any existing metadata, if it is not present then more rows appended every time you click on an id number
+            select.html("");
+            // `Object.entries` to add each key and value pair to the panel
+            // p is new row in panel, add text from key value pairs
+            Object.entries(filteredMeta[0]).forEach(([key,value]) =>{
+            select
+              .append('p').text(`${key} : ${value}`)
             });
-        }
-        demographicInfo()
 
+        })
+    };
+    demographicInfo()
 
-        //     var queryUrl = `https://www.quandl.com/api/v3/datasets/WIKI/AMZN.json?start_date=2016-10-01&end_date=2017-10-01&collapse=monthly&api_key=${apiKey}`;
-        //     d3.json(queryUrl).then(function(data) {
-        //       var dates = unpack(data.dataset.data, 0);
-        //       var openPrices = unpack(data.dataset.data, 1);
-        //       var highPrices = unpack(data.dataset.data, 2);
-        //       var lowPrices = unpack(data.dataset.data, 3);
-        //       var closingPrices = unpack(data.dataset.data, 4);
-        //       var volume = unpack(data.dataset.data, 5);
-        //       buildTable(dates, openPrices, highPrices, lowPrices, closingPrices, volume);
-        //     });
-        //   }
-
-    
 
     })
 };
 
+
 optionChanged()
+
 
 
 
