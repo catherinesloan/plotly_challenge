@@ -34,7 +34,9 @@ function optionChanged(subject_id) {
     d3.json("samples.json").then(function(data) { 
         var samples = data.samples;
         var filteredSamples = samples.filter(x => x.id == subject_id);
-        console.log(`filtered samples: ${filteredSamples}`); 
+        console.log(`filtered samples: ${filteredSamples}`);
+        // to remove an error message that I was receiving when calling sample_values
+        // Ryan helped with this
         if(filteredSamples[0] == undefined){
             return;
         };
@@ -70,6 +72,7 @@ function optionChanged(subject_id) {
 
         // OTU id's are currently integers which changes the way they are plotted on the y axis
         // Using map to create a new array with OTU added as a string infront of each ID 
+        // should I be using parse int
         var labels = labelsBarChartReversed.map(y => "OTU " + y);
         console.log(`Top 10 OTU IDs in correct format for labels y axis: ${labels}`);
 
@@ -151,6 +154,49 @@ function optionChanged(subject_id) {
 
           // Display the sample metadata, i.e., an individual's demographic information.
           // Display each key-value pair from the metadata JSON object somewhere on the page.
+
+          // Pulling out the demographic info
+          function demographicInfo() {
+            d3.json("samples.json").then(function(data) {
+                var metadata = data.metadata;
+                var idNumber = metadata.filter(x => x.id == subject_id)[0].id;
+                console.log(`The ID number for selected subject: ${idNumber}`);
+
+                var ethnicity = metadata.filter(x => x.id == subject_id)[0].ethnicity;
+                console.log(`The ethnicity of ${idNumber} is ${ethnicity}`);
+
+                var gender = metadata.filter(x => x.id == subject_id)[0].gender;
+                console.log(`The gender of ${idNumber} is ${gender}`);
+
+                var age = metadata.filter(x => x.id == subject_id)[0].age;
+                console.log(`The age of ${idNumber} is ${age}`);
+
+                var location = metadata.filter(x => x.id == subject_id)[0].location;
+                console.log(`The location of ${idNumber} is ${location}`);
+
+                var bbtype = metadata.filter(x => x.id == subject_id)[0].bbtype;
+                console.log(`The bbtype of ${idNumber} is ${bbtype}`);
+
+                var wfreq = metadata.filter(x => x.id == subject_id)[0].wfreq;
+                console.log(`The wfreq of ${idNumber} is ${wfreq}`);
+
+                
+            });
+        }
+        demographicInfo()
+
+
+        //     var queryUrl = `https://www.quandl.com/api/v3/datasets/WIKI/AMZN.json?start_date=2016-10-01&end_date=2017-10-01&collapse=monthly&api_key=${apiKey}`;
+        //     d3.json(queryUrl).then(function(data) {
+        //       var dates = unpack(data.dataset.data, 0);
+        //       var openPrices = unpack(data.dataset.data, 1);
+        //       var highPrices = unpack(data.dataset.data, 2);
+        //       var lowPrices = unpack(data.dataset.data, 3);
+        //       var closingPrices = unpack(data.dataset.data, 4);
+        //       var volume = unpack(data.dataset.data, 5);
+        //       buildTable(dates, openPrices, highPrices, lowPrices, closingPrices, volume);
+        //     });
+        //   }
 
     
 
