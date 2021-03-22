@@ -8,6 +8,7 @@ d3.json("samples.json").then(function(data){
     
 });
 
+
 // 2. Create a horizontal bar chart with a dropdown menu to display the top 10 OTUs found in that individual.
 // Use sample_values as the values for the bar chart.
 // Use otu_ids as the labels for the bar chart.
@@ -176,26 +177,60 @@ function optionChanged(subject_id) {
     demographicInfo()
 
 
+    // Advanced Challenge Assignment (Optional)
+    // Adapt the Gauge Chart from https://plot.ly/javascript/gauge-charts/ to plot the weekly washing frequency of the individual.
+    // You will need to modify the example gauge code to account for values ranging from 0 through 9.
+    // Update the chart whenever a new sample is selected.
+
+    // pulling out the washing frequency for selected ID No
+    d3.json("samples.json").then(function(data) { 
+        var metaData = data.metadata;
+        var washFrequency = metaData.filter(x => x.id == subject_id)[0].wfreq;
+        console.log(`Washing frequency for ${subject_id}: ${washFrequency}`);
+
+
+        var dataThree = [
+            {
+                domain: { x: [0, 1], y: [0, 1] },
+                value: washFrequency,
+                title: { text: "Scrubs Per Week" },
+                type: "indicator",
+                mode: "gauge+number",
+                gauge: {
+                    axis: { range: [null, 9 ]},
+                    steps: [
+                        { range: [0, 1], color: "White"},
+                        { range: [1, 2], color: "Beige"},
+                        { range: [2, 3], color: "Wheat"},
+                        { range: [3, 4], color: "Tan"},
+                        { range: [4, 5], color: "LightGreen"},
+                        { range: [5, 6], color: "YellowGreen"},
+                        { range: [6, 7], color: "SeaGreen"},
+                        { range: [7, 8], color: "ForestGreen"},
+                        { range: [8, 9], color: "Green"}
+                    ],
+                    
+
+                    
+                }
+                
+            }
+        ];
+        
+        var layout = { width: 600, height: 500, margin: { t: 50, b: 50 } };
+        
+        Plotly.newPlot('gauge', dataThree, layout);
+
+
+
+    });
+
+
+
+
     })
 };
 
 
 optionChanged()
 
-
-
-
-
-
-// HW SESSION - this pulls out sample values for one 
-// d3.json("samples.json").then(function(data){ 
-//     var samples = data.samples;
-//     console.log(samples.filter(x => x.id == "940")[0].sample_values);
-    
-// });
-
-// could use this instead trying to work out error message
-// var values_barchart = samples.filter(x => x.id == subject_id);
-//         var values_barchart1 =  values_barchart[0];
-//         var values_barchart2 = values_barchart1.sample_values;
-//         console.log(`Sample values for selected subject id: ${values_barchart2}`);
