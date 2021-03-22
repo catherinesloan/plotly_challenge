@@ -1,5 +1,6 @@
 
-// need to change it so that the data for 940 is visual on openong browser
+// need to change it so that the data for 940 is visual on opening browser
+// CHANGE VARIABLE NAMES IN FIRST PART OF CODE - referring to bar chart but actually use them for the bubble chart
 
 // 1. Use the D3 library to read in samples.json.
 
@@ -8,7 +9,10 @@ d3.json("samples.json").then(function(data){
     
 });
 
-
+// 2. Create a horizontal bar chart with a dropdown menu to display the top 10 OTUs found in that individual.
+// Use sample_values as the values for the bar chart.
+// Use otu_ids as the labels for the bar chart.
+// Use otu_labels as the hovertext for the chart.
 
 function dropdown() {
     // grabbing the element not the value
@@ -22,19 +26,19 @@ function dropdown() {
         })
     }))
 };
-
 dropdown()
 
 
-// 2. Create a horizontal bar chart with a dropdown menu to display the top 10 OTUs found in that individual.
-// Use sample_values as the values for the bar chart.
-// Use otu_ids as the labels for the bar chart.
-// Use otu_labels as the hovertext for the chart.
 
 function optionChanged(subject_id) {
     d3.json("samples.json").then(function(data) { 
         var samples = data.samples;
-        var valuesBarChart = samples.filter(x => x.id == subject_id)[0].sample_values;
+        var filteredSamples = samples.filter(x => x.id == subject_id);
+        console.log(`filtered samples: ${filteredSamples}`); 
+        if(filteredSamples[0] == undefined){
+            return;
+        };
+        var valuesBarChart = filteredSamples[0].sample_values;
         console.log(`Sample values for selected subject id: ${valuesBarChart}`);
         var labelsBarChart = samples.filter(x => x.id == subject_id)[0].otu_ids;
         console.log(`OTU ids for selected subject id: ${labelsBarChart}`);
@@ -97,13 +101,58 @@ function optionChanged(subject_id) {
                 l: 100,
                 r: 100,
                 b: 100,
-                // reduced to 30 so plot sits under title nicely
-                t: 30
+                t: 100
             }
         } 
 
         // Render the plot to the div tag with id "bar"
         Plotly.newPlot("bar", data, layout);
+
+
+
+        // 3. Create a bubble chart that displays each sample.
+        // Use otu_ids for the x values.
+        // Use sample_values for the y values.
+        // Use sample_values for the marker size.
+        // Use otu_ids for the marker colors.
+        // Use otu_labels for the text values.
+
+        // https://plotly.com/javascript/bubble-charts/
+        var trace2 = {
+            x: labelsBarChart,
+            y: valuesBarChart,
+            text: labelsHoverText,
+            mode: 'markers',
+            marker: {
+              size: valuesBarChart,
+              color: labelsBarChart
+            }
+          };
+          
+          var dataTwo = [trace2];
+          
+          var layout = {
+            title: `All OTU's for ID No.${subject_id}`,
+            xaxis: {
+                title: "OTU ID"
+            },
+            yaxis: {
+                title: "Sample Values"
+            },
+            showlegend: false,
+            height: 600,
+            width: 1000
+          };
+          
+          // Render the plot to the div tag with id "bar"
+          Plotly.newPlot('bubble', dataTwo, layout);
+
+
+
+          // Display the sample metadata, i.e., an individual's demographic information.
+          // Display each key-value pair from the metadata JSON object somewhere on the page.
+
+    
 
     })
 };
