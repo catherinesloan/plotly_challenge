@@ -1,10 +1,9 @@
-// double up of code, how do I just make it listen for a change rather than writing the code twice
-// change variable names and tidy up code
 
-// Using the D3 library to read in samples.json.
+// Using the D3 library to read in samples.json - can inspect data in the console
 d3.json("samples.json").then(function(data){ 
     console.log(data);
 }); 
+
 
 // Creating the drop down with each subject id number as an option/row
 function dropdown() {
@@ -18,6 +17,7 @@ function dropdown() {
     }))
 };
 dropdown()
+
 
 // Creating an initial function so that when the webpage is opened 940's visualisations are displayed
 function init() {
@@ -87,7 +87,7 @@ function init() {
         Plotly.newPlot("bar", data, layout);
 
         
-        // PLOTTING BUBBLE GRAPH - already created variables for values
+        // PLOTTING BUBBLE CHART 
         var trace2 = {
             x: otuIds, 
             y: sampleValues, 
@@ -118,22 +118,23 @@ function init() {
           Plotly.newPlot('bubble', dataTwo, layout);
 
 
-          // WASHING FREQUENCY GAUGE CHART
+          // BONUS - GAUGE CHART:
+          // https://plotly.com/javascript/gauge-charts/
           d3.json("samples.json").then(function(data) { 
             var initialGauge = data.metadata[0];
             var initialWashFrequency = initialGauge.wfreq;
             console.log(`Washing frequency for ${idNumber}: ${initialWashFrequency}`);
     
-            // pLOTTING GAUGE
             var dataThree = [
                 {
                     domain: { x: [0, 1], y: [0, 1] },
                     value: initialWashFrequency,
-                    title: { text: `ID ${idNumber} Scrubs Per Week`},
+                    title: { text: "Scrubs Per Week"},
                     type: "indicator",
                     mode: "gauge+number",
                     gauge: {
                         axis: { range: [null, 9 ]},
+                        bar: { color: "crimson" },
                         steps: [
                             { range: [0, 1], color: "White"},
                             { range: [1, 2], color: "Beige"},
@@ -160,10 +161,7 @@ function init() {
 init() 
 
 
-// creating a function to handle change in dropdown menu
-// Recoded all of the above plots
-// Need to find another solution
-
+// Creating a function to handle change in dropdown menu
 function optionChanged(subject_id) {
     d3.json("samples.json").then(function(data) { 
         var samples = data.samples;
@@ -172,59 +170,39 @@ function optionChanged(subject_id) {
         if(filteredSamples[0] == undefined){
             return;
         };
-        var valuesBarChart = filteredSamples[0].sample_values;
-        console.log(`Sample values for ${subject_id}: ${valuesBarChart}`);
-        var labelsBarChart = samples.filter(x => x.id == subject_id)[0].otu_ids;
-        console.log(`OTU ids for selected subject id: ${labelsBarChart}`);
-        var labelsHoverText = samples.filter(x => x.id == subject_id)[0].otu_labels;
-        console.log(`OTU labels for selected subject id: ${labelsHoverText}`);
+        var selectedSampleValues = filteredSamples[0].sample_values;
+        console.log(`Sample values for ${subject_id}: ${selectedSampleValues}`);
+        var selectedOtuIds = samples.filter(x => x.id == subject_id)[0].otu_ids;
+        console.log(`OTU ids for selected ${subject_id}: ${selectedOtuIds}`);
+        var selectedLabels = samples.filter(x => x.id == subject_id)[0].otu_labels;
+        console.log(`OTU labels for selected ${subject_id}: ${selectedLabels}`);
+
+        // BAR CHART - TOP 10 VALUES:
 
         // Sorting the array of sample values in descending order
-        // Don't particularly need this step as the array is already sorted in descending order
-        var valuesBarChartSorted = Array.from(valuesBarChart).sort((a, b) => b-a);
-        console.log(`Sorted sample values for selected subject id: ${valuesBarChartSorted}`);
-
+        var selectedValuesSorted = Array.from(selectedSampleValues).sort((a, b) => b-a);
         // Slicing the first 10 objects for plotting
-        var valuesBarChartSliced = valuesBarChartSorted.slice(0, 10);
-        console.log(`Top 10 sample values for selected subject id: ${valuesBarChartSliced}`);
-
+        var selectedValuesSliced = selectedValuesSorted.slice(0, 10);
         // Reverse the array to accommodate Plotly's defaults
-        var valuesBarChartReversed = valuesBarChartSliced.reverse();
-        console.log(`Top 10 sample values reversed: ${valuesBarChartReversed}`);
+        var selectedValuesReversed = selectedValuesSliced.reverse();
 
-        
-        // DOING THE SAME FOR Y AXIS LABELS
-        // Slicing the first 10 labels for plotting
-        var labelsBarChartSliced = labelsBarChart.slice(0, 10);
-        console.log(`Top 10 id's for selected subject id: ${labelsBarChartSliced}`);
-
-        // Reverse the array to accommodate Plotly's defaults
-        var labelsBarChartReversed = labelsBarChartSliced.reverse();
-        console.log(`Top 10 id's reversed: ${labelsBarChartReversed}`);
-
+        // For the y labels
+        var selectedOtuIdsSliced = selectedOtuIds.slice(0, 10);
+        var selectedOtuIdsReversed = selectedOtuIdsSliced.reverse();
         // OTU id's are currently integers which changes the way they are plotted on the y axis
         // Using map to create a new array with OTU added as a string infront of each ID 
-        // should I be using parse int
-        var labels = labelsBarChartReversed.map(y => "OTU " + y);
-        console.log(`Top 10 OTU IDs in correct format for labels y axis: ${labels}`);
+        var selectedOtuLabels = selectedOtuIdsReversed.map(y => "OTU " + y);
 
-        
-        // DOING THE SAME FOR HOVER TEXT
-        // Slicing the first 10 hover text for plotting
-        var labelsHoverTextSliced = labelsHoverText.slice(0, 10);
-        console.log(`Top 10 OTU labels for hover text: ${labelsHoverTextSliced}`);
-
-        // Reverse the array to accommodate Plotly's defaults
-        var labelsHoverTextReversed = labelsHoverTextSliced.reverse();
-        console.log(`Top 10 OTU labels reversed: ${labelsHoverTextReversed}`);
-
+        // For the hover text
+        var selectedLabelsSliced = selectedLabels.slice(0, 10);
+        var selectedLabelsReversed = selectedLabelsSliced.reverse();
 
         // Plotting horizontal bar chart
         var trace1 = {
             type: "bar",
-            x: valuesBarChartReversed,
-            y: labels,
-            text: labelsHoverTextReversed, 
+            x: selectedValuesReversed,
+            y: selectedOtuLabels,
+            text: selectedLabelsReversed, 
             orientation: 'h'
         }
 
@@ -243,24 +221,16 @@ function optionChanged(subject_id) {
         // Render the plot to the div tag with id "bar"
         Plotly.newPlot("bar", data, layout);
 
-
-
-        // 3. Create a bubble chart that displays each sample.
-        // Use otu_ids for the x values.
-        // Use sample_values for the y values.
-        // Use sample_values for the marker size.
-        // Use otu_ids for the marker colors.
-        // Use otu_labels for the text values.
-
+        // BUBBLE CHART:
         // https://plotly.com/javascript/bubble-charts/
         var trace2 = {
-            x: labelsBarChart,
-            y: valuesBarChart,
-            text: labelsHoverText,
+            x: selectedOtuIds,
+            y: selectedSampleValues,
+            text: selectedLabels,
             mode: 'markers',
             marker: {
-              size: valuesBarChart,
-              color: labelsBarChart // red colour gradient by default, would be able to change
+              size: selectedSampleValues,
+              color: selectedOtuIds // red colour gradient by default, would be able to change
             }
           };
           
@@ -282,24 +252,19 @@ function optionChanged(subject_id) {
           // Render the plot to the div tag with id "bubble"
           Plotly.newPlot('bubble', dataTwo, layout);
 
-
-
-    // 4. Display the sample metadata, i.e., an individual's demographic information.
-    // 5. Display each key-value pair from the metadata JSON object somewhere on the page.
-
+    
+    // DEMOGRAPHIC INFORMATION:
     // defining a function to pull out demographic info, depending on subject_id
     function demographicInfo() {
         d3.json("samples.json").then(function(data) { 
             var metadata = data.metadata;
-            var filteredMeta = metadata.filter(x => x.id == subject_id);
-            
-            // then appending it to the demographic info panel
+            var filteredMetadata = metadata.filter(x => x.id == subject_id);
+            // appending it to the demographic info panel
             var select = d3.select("#sample-metadata"); 
-            // .html("") to clear any existing metadata, if it is not present then more rows appended every time you click on an id number
+            // to clear any existing metadata
             select.html("");
             // `Object.entries` to add each key and value pair to the panel
-            // p is new row in panel, add text from key value pairs
-            Object.entries(filteredMeta[0]).forEach(([key,value]) =>{
+            Object.entries(filteredMetadata[0]).forEach(([key,value]) =>{
             select
               .append('p').text(`${key} : ${value}`)
             });
@@ -309,11 +274,8 @@ function optionChanged(subject_id) {
     demographicInfo()
 
 
-    // Advanced Challenge Assignment (Optional)
-    // Adapt the Gauge Chart from https://plot.ly/javascript/gauge-charts/ to plot the weekly washing frequency of the individual.
-    // You will need to modify the example gauge code to account for values ranging from 0 through 9.
-    // Update the chart whenever a new sample is selected.
-
+    // BONUS - GAUGE CHART:
+    // https://plotly.com/javascript/gauge-charts/
     // pulling out the washing frequency for selected ID No
     d3.json("samples.json").then(function(data) { 
         var metaData = data.metadata;
@@ -330,6 +292,7 @@ function optionChanged(subject_id) {
                 mode: "gauge+number",
                 gauge: {
                     axis: { range: [null, 9 ]},
+                    bar: { color: "crimson" },
                     steps: [
                         { range: [0, 1], color: "White"},
                         { range: [1, 2], color: "Beige"},
@@ -353,13 +316,8 @@ function optionChanged(subject_id) {
         
         Plotly.newPlot('gauge', dataThree, layout);
 
-
-
+    });
     });
 
-
-    });
 };
-
-
 optionChanged()
