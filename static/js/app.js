@@ -1,118 +1,78 @@
-// need to change it so that the data for 940 is visual on opening browser
-// CHANGE VARIABLE NAMES IN FIRST PART OF CODE - referring to bar chart but actually use them for the bubble chart
+// double up of code, how do I just make it listen for a change rather than writing the code twice
+// change variable names and tidy up code
 
-// 1. Use the D3 library to read in samples.json.
-
+// Using the D3 library to read in samples.json.
 d3.json("samples.json").then(function(data){ 
     console.log(data);
 }); 
 
-
-
-// 2. Create a horizontal bar chart with a dropdown menu to display the top 10 OTUs found in that individual.
-// Use sample_values as the values for the bar chart.
-// Use otu_ids as the labels for the bar chart.
-// Use otu_labels as the hovertext for the chart.
-
+// Creating the drop down with each subject id number as an option/row
 function dropdown() {
-    // grabbing the element not the value
     var subjectSelect = d3.select("#selDataset")
     d3.json("samples.json").then((data => {
-        // pulling out the names
-        var names = data.names;
+        var names = data.names; // pulling out the names
         names.forEach((sample) => {
-            // this appends rows in html with option tag <option>940</option>
+            // this appends the rows in html with option tag .e.g. <option>940</option>
             subjectSelect.append("option").text(sample).property("value", sample)
         })
     }))
 };
 dropdown()
 
-
-
-
-// this  creates an initial function so that when open webpage 940 demographic info is visual
-// need to do the same for all charts
-// then can change original code so that everything within my init function changes on change?
-// otherwise will have lots of double ups in code
-
+// Creating an initial function so that when the webpage is opened 940's visualisations are displayed
 function init() {
     d3.json("samples.json").then(function(data) {
-
-        // DEMOGRAPHICS
+        // DEMOGRAPHICS:
         var initialDemographics = data.metadata[0];
-
         // then appending it to the demographic info panel
         var select = d3.select("#sample-metadata");
-
         Object.entries(initialDemographics).forEach(([key,value]) =>{
             select
               .append('p').text(`${key} : ${value}`)
             });
 
-        // BAR CHART
-        var initialBar = data.samples[0];
-        var idNumber = initialBar.id;
-        console.log(`this should be 940 : ${idNumber}`);
+        // EXTRACTING DATA FOR ID 940:
+        var sample = data.samples[0];
+        var idNumber = sample.id;
+        
+        var sampleValues = sample.sample_values;
+        console.log(`Sample values for ${idNumber}: ${sampleValues}`);
+        var otuIds = sample.otu_ids;
+        console.log(`OTU ids for ${idNumber}: ${otuIds}`);
+        var labels = sample.otu_labels;
+        console.log(`OTU labels for ${idNumber}: ${labels}`);
 
-        var valuesBarChart = initialBar.sample_values;
-        console.log(`Sample values for 940: ${valuesBarChart}`);
-        var labelsBarChart = initialBar.otu_ids;
-        console.log(`OTU ids for 940: ${labelsBarChart}`);
-        var labelsHoverText = initialBar.otu_labels;
-        console.log(`OTU labels for 940: ${labelsHoverText}`);
+        // BAR CHART - TOP 10 VALUES:
 
         // Sorting the array of sample values in descending order
-        // Don't particularly need this step as the array is already sorted in descending order
-        var valuesBarChartSorted = Array.from(valuesBarChart).sort((a, b) => b-a);
-        console.log(`Sorted sample values for selected subject id: ${valuesBarChartSorted}`);
-
+        var sampleValuesSorted = Array.from(sampleValues).sort((a, b) => b-a);
         // Slicing the first 10 objects for plotting
-        var valuesBarChartSliced = valuesBarChartSorted.slice(0, 10);
-        console.log(`Top 10 sample values for selected subject id: ${valuesBarChartSliced}`);
-
+        var sampleValuesSliced = sampleValuesSorted.slice(0, 10);
         // Reverse the array to accommodate Plotly's defaults
-        var valuesBarChartReversed = valuesBarChartSliced.reverse();
-        console.log(`Top 10 sample values reversed: ${valuesBarChartReversed}`);
+        var sampleValuesReversed = sampleValuesSliced.reverse();
 
-        
-        // DOING THE SAME FOR Y AXIS LABELS
-        // Slicing the first 10 labels for plotting
-        var labelsBarChartSliced = labelsBarChart.slice(0, 10);
-        console.log(`Top 10 id's for selected subject id: ${labelsBarChartSliced}`);
-
-        // Reverse the array to accommodate Plotly's defaults
-        var labelsBarChartReversed = labelsBarChartSliced.reverse();
-        console.log(`Top 10 id's reversed: ${labelsBarChartReversed}`);
-
+        // Doing the same for y axis labels
+        var otuIdsSliced = otuIds.slice(0, 10);
+        var otuIdsReversed = otuIdsSliced.reverse();
         // OTU id's are currently integers which changes the way they are plotted on the y axis
         // Using map to create a new array with OTU added as a string infront of each ID 
-        // should I be using parse int
-        var labels = labelsBarChartReversed.map(y => "OTU " + y);
-        console.log(`Top 10 OTU IDs in correct format for labels y axis: ${labels}`);
-
+        var otuIdLabels = otuIdsReversed.map(y => "OTU " + y);
         
-        // DOING THE SAME FOR HOVER TEXT
-        // Slicing the first 10 hover text for plotting
-        var labelsHoverTextSliced = labelsHoverText.slice(0, 10);
-        console.log(`Top 10 OTU labels for hover text: ${labelsHoverTextSliced}`);
+        // Doing the same for the hover text
+        var labelsSliced = labels.slice(0, 10);
+        var labelsReversed = labelsSliced.reverse();
 
-        // Reverse the array to accommodate Plotly's defaults
-        var labelsHoverTextReversed = labelsHoverTextSliced.reverse();
-        console.log(`Top 10 OTU labels reversed: ${labelsHoverTextReversed}`);
-
-
-        // Plotting horizontal bar chart
+        // PLOTTING BAR CHART:
         var trace1 = {
             type: "bar",
-            x: valuesBarChartReversed,
-            y: labels,
-            text: labelsHoverTextReversed, 
+            x: sampleValuesReversed,
+            y: otuIdLabels,
+            text: labelsReversed, 
             orientation: 'h'
         }
 
         var data = [trace1];
-        
+
         var layout = {
             title: `Top 10 OTU's for ID No.${idNumber}`,
             margin: {
@@ -126,18 +86,16 @@ function init() {
         // Render the plot to the div tag with id "bar"
         Plotly.newPlot("bar", data, layout);
 
-
-
-
-        // initial bubble chart
+        
+        // PLOTTING BUBBLE GRAPH - already created variables for values
         var trace2 = {
-            x: labelsBarChart,
-            y: valuesBarChart,
-            text: labelsHoverText,
+            x: otuIds, 
+            y: sampleValues, 
+            text: labels,
             mode: 'markers',
             marker: {
-              size: valuesBarChart,
-              color: labelsBarChart
+              size: sampleValues,
+              color: otuIds
             }
           };
           
@@ -160,18 +118,18 @@ function init() {
           Plotly.newPlot('bubble', dataTwo, layout);
 
 
-          // washing frequency gauge chart
+          // WASHING FREQUENCY GAUGE CHART
           d3.json("samples.json").then(function(data) { 
-            var initGauge = data.metadata[0];
-            var washFrequency = initGauge.wfreq;
-            console.log(`Washing frequency for ${idNumber}: ${washFrequency}`);
+            var initialGauge = data.metadata[0];
+            var initialWashFrequency = initialGauge.wfreq;
+            console.log(`Washing frequency for ${idNumber}: ${initialWashFrequency}`);
     
-    
+            // pLOTTING GAUGE
             var dataThree = [
                 {
                     domain: { x: [0, 1], y: [0, 1] },
-                    value: washFrequency,
-                    title: { text: "Scrubs Per Week" },
+                    value: initialWashFrequency,
+                    title: { text: `ID ${idNumber} Scrubs Per Week`},
                     type: "indicator",
                     mode: "gauge+number",
                     gauge: {
@@ -186,51 +144,36 @@ function init() {
                             { range: [6, 7], color: "SeaGreen"},
                             { range: [7, 8], color: "ForestGreen"},
                             { range: [8, 9], color: "Green"}
-                        ],
-                        
-    
-                        
-                    }
-                    
+                        ],   
+                    }    
                 }
             ];
             
             var layout = { width: 600, height: 500, margin: { t: 50, b: 50 } };
             
+            // Render the plot to the div tag with id "gauge"
             Plotly.newPlot('gauge', dataThree, layout);
     
-    
-    
         });
-        
-
-
-
-
-
-
-
     });
 }
 init() 
 
 
+// creating a function to handle change in dropdown menu
+// Recoded all of the above plots
+// Need to find another solution
 
-
-
-// creating a function for every time the dropdown is changed, all other functions and plots are defined within this
 function optionChanged(subject_id) {
     d3.json("samples.json").then(function(data) { 
         var samples = data.samples;
         var filteredSamples = samples.filter(x => x.id == subject_id);
-        console.log(`filtered samples: ${filteredSamples}`);
         // to remove an error message that I was receiving when calling sample_values
-        // Ryan helped with this
         if(filteredSamples[0] == undefined){
             return;
         };
         var valuesBarChart = filteredSamples[0].sample_values;
-        console.log(`Sample values for selected subject id: ${valuesBarChart}`);
+        console.log(`Sample values for ${subject_id}: ${valuesBarChart}`);
         var labelsBarChart = samples.filter(x => x.id == subject_id)[0].otu_ids;
         console.log(`OTU ids for selected subject id: ${labelsBarChart}`);
         var labelsHoverText = samples.filter(x => x.id == subject_id)[0].otu_labels;
