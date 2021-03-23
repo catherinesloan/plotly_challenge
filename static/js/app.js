@@ -5,8 +5,8 @@
 
 d3.json("samples.json").then(function(data){ 
     console.log(data);
-    
-});
+}); 
+
 
 
 // 2. Create a horizontal bar chart with a dropdown menu to display the top 10 OTUs found in that individual.
@@ -27,6 +27,34 @@ function dropdown() {
     }))
 };
 dropdown()
+
+
+
+
+// this  creates an initial function so that when open webpage 940 demographic info is visual
+// need to do the same for all charts
+// then can change original code so that everything within my init function changes on change?
+// otherwise will have lots of double ups in code
+
+function init() {
+    d3.json("samples.json").then(function(data) {
+        var initialDemographics = data.metadata[0];
+
+        // then appending it to the demographic info panel
+        var select = d3.select("#sample-metadata");
+
+        Object.entries(initialDemographics).forEach(([key,value]) =>{
+            select
+              .append('p').text(`${key} : ${value}`)
+            });
+
+    });
+
+}
+init() 
+
+
+
 
 
 // creating a function for every time the dropdown is changed, all other functions and plots are defined within this
@@ -233,4 +261,3 @@ function optionChanged(subject_id) {
 
 
 optionChanged()
-
