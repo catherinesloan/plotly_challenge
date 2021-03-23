@@ -38,6 +38,8 @@ dropdown()
 
 function init() {
     d3.json("samples.json").then(function(data) {
+
+        // DEMOGRAPHICS
         var initialDemographics = data.metadata[0];
 
         // then appending it to the demographic info panel
@@ -48,8 +50,167 @@ function init() {
               .append('p').text(`${key} : ${value}`)
             });
 
-    });
+        // BAR CHART
+        var initialBar = data.samples[0];
+        var idNumber = initialBar.id;
+        console.log(`this should be 940 : ${idNumber}`);
 
+        var valuesBarChart = initialBar.sample_values;
+        console.log(`Sample values for 940: ${valuesBarChart}`);
+        var labelsBarChart = initialBar.otu_ids;
+        console.log(`OTU ids for 940: ${labelsBarChart}`);
+        var labelsHoverText = initialBar.otu_labels;
+        console.log(`OTU labels for 940: ${labelsHoverText}`);
+
+        // Sorting the array of sample values in descending order
+        // Don't particularly need this step as the array is already sorted in descending order
+        var valuesBarChartSorted = Array.from(valuesBarChart).sort((a, b) => b-a);
+        console.log(`Sorted sample values for selected subject id: ${valuesBarChartSorted}`);
+
+        // Slicing the first 10 objects for plotting
+        var valuesBarChartSliced = valuesBarChartSorted.slice(0, 10);
+        console.log(`Top 10 sample values for selected subject id: ${valuesBarChartSliced}`);
+
+        // Reverse the array to accommodate Plotly's defaults
+        var valuesBarChartReversed = valuesBarChartSliced.reverse();
+        console.log(`Top 10 sample values reversed: ${valuesBarChartReversed}`);
+
+        
+        // DOING THE SAME FOR Y AXIS LABELS
+        // Slicing the first 10 labels for plotting
+        var labelsBarChartSliced = labelsBarChart.slice(0, 10);
+        console.log(`Top 10 id's for selected subject id: ${labelsBarChartSliced}`);
+
+        // Reverse the array to accommodate Plotly's defaults
+        var labelsBarChartReversed = labelsBarChartSliced.reverse();
+        console.log(`Top 10 id's reversed: ${labelsBarChartReversed}`);
+
+        // OTU id's are currently integers which changes the way they are plotted on the y axis
+        // Using map to create a new array with OTU added as a string infront of each ID 
+        // should I be using parse int
+        var labels = labelsBarChartReversed.map(y => "OTU " + y);
+        console.log(`Top 10 OTU IDs in correct format for labels y axis: ${labels}`);
+
+        
+        // DOING THE SAME FOR HOVER TEXT
+        // Slicing the first 10 hover text for plotting
+        var labelsHoverTextSliced = labelsHoverText.slice(0, 10);
+        console.log(`Top 10 OTU labels for hover text: ${labelsHoverTextSliced}`);
+
+        // Reverse the array to accommodate Plotly's defaults
+        var labelsHoverTextReversed = labelsHoverTextSliced.reverse();
+        console.log(`Top 10 OTU labels reversed: ${labelsHoverTextReversed}`);
+
+
+        // Plotting horizontal bar chart
+        var trace1 = {
+            type: "bar",
+            x: valuesBarChartReversed,
+            y: labels,
+            text: labelsHoverTextReversed, 
+            orientation: 'h'
+        }
+
+        var data = [trace1];
+        
+        var layout = {
+            title: `Top 10 OTU's for ID No.${idNumber}`,
+            margin: {
+                l: 100,
+                r: 100,
+                b: 100,
+                t: 100
+            }
+        } 
+
+        // Render the plot to the div tag with id "bar"
+        Plotly.newPlot("bar", data, layout);
+
+
+
+
+        // initial bubble chart
+        var trace2 = {
+            x: labelsBarChart,
+            y: valuesBarChart,
+            text: labelsHoverText,
+            mode: 'markers',
+            marker: {
+              size: valuesBarChart,
+              color: labelsBarChart
+            }
+          };
+          
+          var dataTwo = [trace2];
+          
+          var layout = {
+            title: `All OTU's for ID No.${idNumber}`,
+            xaxis: {
+                title: "OTU ID"
+            },
+            yaxis: {
+                title: "Sample Values"
+            },
+            showlegend: false,
+            height: 600,
+            width: 1000
+          };
+          
+          // Render the plot to the div tag with id "bubble"
+          Plotly.newPlot('bubble', dataTwo, layout);
+
+
+          // washing frequency gauge chart
+          d3.json("samples.json").then(function(data) { 
+            var initGauge = data.metadata[0];
+            var washFrequency = initGauge.wfreq;
+            console.log(`Washing frequency for ${idNumber}: ${washFrequency}`);
+    
+    
+            var dataThree = [
+                {
+                    domain: { x: [0, 1], y: [0, 1] },
+                    value: washFrequency,
+                    title: { text: "Scrubs Per Week" },
+                    type: "indicator",
+                    mode: "gauge+number",
+                    gauge: {
+                        axis: { range: [null, 9 ]},
+                        steps: [
+                            { range: [0, 1], color: "White"},
+                            { range: [1, 2], color: "Beige"},
+                            { range: [2, 3], color: "Wheat"},
+                            { range: [3, 4], color: "Tan"},
+                            { range: [4, 5], color: "LightGreen"},
+                            { range: [5, 6], color: "YellowGreen"},
+                            { range: [6, 7], color: "SeaGreen"},
+                            { range: [7, 8], color: "ForestGreen"},
+                            { range: [8, 9], color: "Green"}
+                        ],
+                        
+    
+                        
+                    }
+                    
+                }
+            ];
+            
+            var layout = { width: 600, height: 500, margin: { t: 50, b: 50 } };
+            
+            Plotly.newPlot('gauge', dataThree, layout);
+    
+    
+    
+        });
+        
+
+
+
+
+
+
+
+    });
 }
 init() 
 
@@ -156,7 +317,7 @@ function optionChanged(subject_id) {
             mode: 'markers',
             marker: {
               size: valuesBarChart,
-              color: labelsBarChart
+              color: labelsBarChart // red colour gradient by default, would be able to change
             }
           };
           
@@ -175,7 +336,7 @@ function optionChanged(subject_id) {
             width: 1000
           };
           
-          // Render the plot to the div tag with id "bar"
+          // Render the plot to the div tag with id "bubble"
           Plotly.newPlot('bubble', dataTwo, layout);
 
 
@@ -185,7 +346,7 @@ function optionChanged(subject_id) {
 
     // defining a function to pull out demographic info, depending on subject_id
     function demographicInfo() {
-        d3.json("samples.json").then(function(data) {
+        d3.json("samples.json").then(function(data) { 
             var metadata = data.metadata;
             var filteredMeta = metadata.filter(x => x.id == subject_id);
             
@@ -200,7 +361,7 @@ function optionChanged(subject_id) {
               .append('p').text(`${key} : ${value}`)
             });
 
-        })
+        });
     };
     demographicInfo()
 
@@ -254,9 +415,7 @@ function optionChanged(subject_id) {
     });
 
 
-
-
-    })
+    });
 };
 
 
