@@ -1,8 +1,8 @@
 # plotly_challenge
 [Click here to view deployed app]https://catherinesloan.github.io/plotly_challenge/
 
-**If cloning repository...* 
-1. activate python environment 
+**If cloning the repository...** 
+1. Activate python environment 
 2. Run "python -m http.server" in terminal
 3. Use local host to view in browser, otherwise CORS error in index.html file
 
@@ -15,7 +15,9 @@ To build an interactive dashboard to explore the Belly Button Biodiversity datas
 ### Output:
 Used the D3 Library to read in [samples.json](https://github.com/catherinesloan/plotly_challenge/blob/master/samples.json)
 
-Created a **dropdown menu** of all subject ID's. On change each of the 4 visualisations updates ...
+Created a **dropdown menu** in [index.html](https://github.com/catherinesloan/plotly_challenge/blob/master/index.html) with all subject ID's. 
+
+On change, each of the 4 visualisations updates from [app.js](https://github.com/catherinesloan/plotly_challenge/blob/master/static/js/app.js) ...
 
 1. **Demographic information** for selected individual
 
