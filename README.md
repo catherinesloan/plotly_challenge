@@ -1,5 +1,5 @@
 # plotly_challenge
-[Click here to view deployed app]https://catherinesloan.github.io/plotly_challenge/
+[Click here to view deployed app](https://catherinesloan.github.io/plotly_challenge/)
 
 **If cloning the repository...** 
 1. Activate python environment 
@@ -19,14 +19,14 @@ Created a **dropdown menu** in [index.html](https://github.com/catherinesloan/pl
 
 On change, each of the 4 visualisations updates from [app.js](https://github.com/catherinesloan/plotly_challenge/blob/master/static/js/app.js) ...
 
-1. **Demographic information** for selected individual
+1. **Demographic Information** for selected individual
 
-2. A **horizontal bar chart** with a dropdown menu to display the top 10 OTUs found in that individual:
+2. A **Horizontal Bar Chart** with a dropdown menu to display the top 10 OTUs found in that individual:
    - sample_values as the values 
    - otu_ids as the labels
    - otu_labels as the hovertext for the chart
    
-3. A **bubble chart** that displays each sample:
+3. A **Bubble Chart** that displays each sample:
    - otu_ids for the x values
    - sample_values for the y values
    - sample_values for the marker size
