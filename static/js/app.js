@@ -68,7 +68,11 @@ function init() {
             x: sampleValuesReversed,
             y: otuIdLabels,
             text: labelsReversed, 
-            orientation: 'h'
+            orientation: 'h',
+            marker: {
+                color: ('#c8cde3'),
+                opacity: 0.7
+            }
         }
 
         var data = [trace1];
@@ -204,7 +208,11 @@ function optionChanged(subject_id) {
             x: selectedValuesReversed,
             y: selectedOtuLabels,
             text: selectedLabelsReversed, 
-            orientation: 'h'
+            orientation: 'h',
+            marker: {
+                color: ('#c8cde3'),
+                opacity: 0.7
+            }
         }
 
         var data = [trace1];
