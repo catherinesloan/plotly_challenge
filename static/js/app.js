@@ -120,6 +120,7 @@ function init() {
 
           // BONUS - GAUGE CHART:
           // https://plotly.com/javascript/gauge-charts/
+          // Colour palette - https://gka.github.io/palettes/#/9|s|fbffc0,d2f3b2,4ec53e|ffffe0,ff005e,93003a|1|1
           d3.json("samples.json").then(function(data) { 
             var initialGauge = data.metadata[0];
             var initialWashFrequency = initialGauge.wfreq;
@@ -134,18 +135,18 @@ function init() {
                     mode: "gauge+number",
                     gauge: {
                         axis: { range: [null, 9 ]},
-                        bar: { color: "crimson" },
+                        bar: { color: "#e0405f" },
                         steps: [
-                            { range: [0, 1], color: "White"},
-                            { range: [1, 2], color: "Beige"},
-                            { range: [2, 3], color: "Wheat"},
-                            { range: [3, 4], color: "Tan"},
-                            { range: [4, 5], color: "LightGreen"},
-                            { range: [5, 6], color: "YellowGreen"},
-                            { range: [6, 7], color: "SeaGreen"},
-                            { range: [7, 8], color: "ForestGreen"},
-                            { range: [8, 9], color: "Green"}
-                        ],   
+                            { range: [0, 1], color: '#f6eef0'},
+                            { range: [1, 2], color: '#fae4dc'},
+                            { range: [2, 3], color: '#fdd9c7'},
+                            { range: [3, 4], color: '#ffcfb2'},
+                            { range: [4, 5], color: '#ffc69c'},
+                            { range: [5, 6], color: '#ffbc84'},
+                            { range: [6, 7], color: '#ffb269'},
+                            { range: [7, 8], color: '#ffa848'},
+                            { range: [8, 9], color: '#ff9d00'}
+                        ]
                     }    
                 }
             ];
@@ -292,21 +293,18 @@ function optionChanged(subject_id) {
                 mode: "gauge+number",
                 gauge: {
                     axis: { range: [null, 9 ]},
-                    bar: { color: "crimson" },
+                    bar: { color: "#e0405f" },
                     steps: [
-                        { range: [0, 1], color: "White"},
-                        { range: [1, 2], color: "Beige"},
-                        { range: [2, 3], color: "Wheat"},
-                        { range: [3, 4], color: "Tan"},
-                        { range: [4, 5], color: "LightGreen"},
-                        { range: [5, 6], color: "YellowGreen"},
-                        { range: [6, 7], color: "SeaGreen"},
-                        { range: [7, 8], color: "ForestGreen"},
-                        { range: [8, 9], color: "Green"}
-                    ],
-                    
-
-                    
+                        { range: [0, 1], color: '#f6eef0'},
+                        { range: [1, 2], color: '#fae4dc'},
+                        { range: [2, 3], color: '#fdd9c7'},
+                        { range: [3, 4], color: '#ffcfb2'},
+                        { range: [4, 5], color: '#ffc69c'},
+                        { range: [5, 6], color: '#ffbc84'},
+                        { range: [6, 7], color: '#ffb269'},
+                        { range: [7, 8], color: '#ffa848'},
+                        { range: [8, 9], color: '#ff9d00'}
+                    ]
                 }
                 
             }
